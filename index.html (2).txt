@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Monthly Commission Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: right;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    input {
+      width: 100%;
+      border: none;
+      text-align: right;
+    }
+    input:focus {
+      outline: none;
+      background-color: #ffffcc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Monthly Commission Tracker</h1>
+
+<table id="commissionTable">
+  <thead>
+    <tr>
+      <th>Month</th>
+      <th>Sales ($)</th>
+      <th>Commission Rate (%)</th>
+      <th>Commission ($)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>January</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>February</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>March</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>April</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>May</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>June</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>July</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>August</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>September</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>October</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>November</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+    <tr>
+      <td>December</td>
+      <td><input type="number" value="0"></td>
+      <td><input type="number" value="10"></td>
+      <td class="commission">0</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Total Commission: $<span id="totalCommission">0</span></h2>
+
+<script>
+function updateCommissions() {
+  let total = 0;
+  const rows = document.querySelectorAll("#commissionTable tbody tr");
+  rows.forEach(row => {
+    const sales = parseFloat(row.cells[1].querySelector("input").value) || 0;
+    const rate = parseFloat(row.cells[2].querySelector("input").value) || 0;
+    const commission = (sales * rate / 100).toFixed(2);
+    row.cells[3].textContent = commission;
+    total += parseFloat(commission);
+  });
+  document.getElementById("totalCommission").textContent = total.toFixed(2);
+}
+
+document.querySelectorAll("input").forEach(input => {
+  input.addEventListener("input", updateCommissions);
+});
+
+updateCommissions();
+</script>
+
+</body>
+</html>
