@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Commission & Sales Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #f9f9f9; }
+        h2, h3 { margin-top: 20px; }
+        input, textarea, select, button {
+            width: 100%; padding: 8px; margin: 6px 0 12px 0; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc;
+        }
+        button { cursor: pointer; background: #28a745; color: white; border: none; }
+        button:hover { background: #218838; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 6px; box-shadow: 0 0 10px #ccc; }
+        .list-item { background: #eef3f7; margin-bottom: 8px; padding: 10px; border-radius: 4px; }
+        .list-item strong { display: block; margin-bottom: 4px; }
+        label { font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Simple Commission & Sales Tracker</h2>
+
+    <h3>Add Company</h3>
+    <input type="text" id="companyName" placeholder="Company Name" />
+    <textarea id="companyNotes" placeholder="Notes about client"></textarea>
+    <button onclick="addCompany()">Add Company</button>
+
+    <div id="companyList"></div>
+
+    <h3>Add Sale</h3>
+    <select id="saleCompany"></select>
+    <input type="date" id="saleDate" />
+    <input type="number" id="saleAmount" placeholder="Sale Amount" />
+    <input type="number" id="saleCommissionRate" placeholder="Commission Rate (%)" />
+    <textarea id="saleNotes" placeholder="Notes about sale"></textarea>
+    <button onclick="addSale()">Add Sale</button>
+
+    <div id="salesList"></div>
+
+    <h3>Add Reminder</h3>
+    <select id="reminderCompany"></select>
+    <input type="date" id="reminderDate" />
+    <textarea id="reminderText" placeholder="Reminder details"></textarea>
+    <button onclick="addReminder()">Add Reminder</button>
+
+    <div id="reminderList"></div>
+</div>
+
+<script>
+    let companies = JSON.parse(localStorage.getItem('companies') || '[]');
+    let sales = JSON.parse(localStorage.getItem('sales') || '[]');
+    let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+
+    function saveData() {
+        localStorage.setItem('companies', JSON.stringify(companies));
+        localStorage.setItem('sales', JSON.stringify(sales));
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+    }
+
+    function renderCompanies() {
+        const list = document.getElementById('companyList');
+        const saleSelect = document.getElementById('saleCompany');
+        const reminderSelect = document.getElementById('reminderCompany');
+        list.innerHTML = '';
+        saleSelect.innerHTML = '';
+        reminderSelect.innerHTML = '';
+        companies.forEach((c, i) => {
+            list.innerHTML += `<div class='list-item'><strong>${c.name}</strong>${c.notes ? '<br>' + c.notes : ''}</div>`;
+            saleSelect.innerHTML += `<option value='${c.name}'>${c.name}</option>`;
+            reminderSelect.innerHTML += `<option value='${c.name}'>${c.name}</option>`;
+        });
+    }
+
+    function renderSales() {
+        const list = document.getElementById('salesList');
+        list.innerHTML = '';
+        sales.forEach(s => {
+            const commission = (s.amount * s.rate / 100).toFixed(2);
+            list.innerHTML += `<div class='list-item'><strong>${s.company}</strong> | ${s.date} | $${s.amount} | Rate: ${s.rate}% | Commission: $${commission}<br>${s.notes || ''}</div>`;
+        });
+    }
+
+    function renderReminders() {
+        const list = document.getElementById('reminderList');
+        list.innerHTML = '';
+        reminders.forEach(r => {
+            list.innerHTML += `<div class='list-item'><strong>${r.company}</strong> | ${r.date}<br>${r.text}</div>`;
+        });
+    }
+
+    function addCompany() {
+        const name = document.getElementById('companyName').value.trim();
+        const notes = document.getElementById('companyNotes').value.trim();
+        if (!name) return alert('Please enter a company name');
+        companies.push({name, notes});
+        saveData();
+        renderCompanies();
+        document.getElementById('companyName').value = '';
+        document.getElementById('companyNotes').value = '';
+    }
+
+    function addSale() {
+        const company = document.getElementById('saleCompany').value;
+        const date = document.getElementById('saleDate').value;
+        const amount = parseFloat(document.getElementById('saleAmount').value);
+        const rate = parseFloat(document.getElementById('saleCommissionRate').value);
+        const notes = document.getElementById('saleNotes').value.trim();
+        if (!company || !date || isNaN(amount) || isNaN(rate)) return alert('Please fill all sale fields correctly');
+        sales.push({company, date, amount, rate, notes});
+        saveData();
+        renderSales();
+        // Reset fields
+        document.getElementById('saleDate').value = '';
+        document.getElementById('saleAmount').value = '';
+        document.getElementById('saleCommissionRate').value = '';
+        document.getElementById('saleNotes').value = '';
+    }
+
+    function addReminder() {
+        const company = document.getElementById('reminderCompany').value;
+        const date = document.getElementById('reminderDate').value;
+        const text = document.getElementById('reminderText').value.trim();
+        if (!company || !date || !text) return alert('Please fill all reminder fields');
+        reminders.push({company, date, text});
+        saveData();
+        renderReminders();
+        document.getElementById('reminderDate').value = '';
+        document.getElementById('reminderText').value = '';
+    }
+
+    renderCompanies();
+    renderSales();
+    renderReminders();
+</script>
+</body>
+</html>
